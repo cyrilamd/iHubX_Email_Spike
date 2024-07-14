@@ -1,70 +1,215 @@
-# Getting Started with Create React App
+### iHubX Email Broadcasting Tool Integration Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This guide provides developers with the necessary steps to integrate the Mailjet-based email broadcasting tool into the main iHubX project. The tool includes functionalities such as creating and saving templates, sending campaigns, scheduling emails, segmenting user emails, and setting auto-replies.
 
-## Available Scripts
+#### Project Structure
 
-In the project directory, you can run:
+```
+iHubX-Email-Broadcasting-Tool/
+├── backend/
+│   ├── server.js
+│   └── ... (other backend files)
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Campaigns.js
+│   │   │   ├── Segmentation.js
+│   │   │   ├── ScheduleSend.js
+│   │   │   ├── AutoReplies.js
+│   │   │   └── ...
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   └── ... (other frontend files)
+│   └── ...
+└── README.md
+```
 
-### `npm start`
+### Step-by-Step Implementation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### 1. Clone the Repository
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+First, clone the repository to your local machine.
 
-### `npm test`
+```bash
+git clone <repository-url>
+cd iHubX-Email-Broadcasting-Tool
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 2. Backend Setup
 
-### `npm run build`
+Navigate to the `backend` directory and install dependencies.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd backend
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Create a `.env` file in the `backend` directory and add your Mailjet credentials.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+MAILJET_API_KEY=your-mailjet-api-key
+MAILJET_SECRET_KEY=your-mailjet-secret-key
+```
 
-### `npm run eject`
+#### 3. Backend Code
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The backend is implemented using Express.js. Below is a simplified version of the backend code from `server.js`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```javascript
+const express = require('express');
+const bodyParser = require('body-parser');
+const cron = require('node-cron');
+const axios = require('axios');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
+require('dotenv').config();
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+const app = express();
+app.use(bodyParser.json());
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+const MAILJET_API_KEY = process.env.MAILJET_API_KEY;
+const MAILJET_SECRET_KEY = process.env.MAILJET_SECRET_KEY;
+const MAILJET_BASE_URL = 'https://api.mailjet.com/v3.1';
 
-## Learn More
+const axiosInstance = axios.create({
+  baseURL: MAILJET_BASE_URL,
+  auth: {
+    username: MAILJET_API_KEY,
+    password: MAILJET_SECRET_KEY
+  },
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+let templates = [];
+let segments = [];
+let autoReplies = [];
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+// Endpoint implementations (templates, segments, campaigns, scheduling, auto-replies)
 
-### Code Splitting
+app.use(express.static(path.join(__dirname, 'build')));
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
-### Analyzing the Bundle Size
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### 4. Frontend Setup
 
-### Making a Progressive Web App
+Navigate to the `client` directory and install dependencies.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+cd ../client
+npm install
+```
 
-### Advanced Configuration
+#### 5. Frontend Code
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+The frontend is implemented using React. Below are the key components.
 
-### Deployment
+**Campaigns.js**
+```javascript
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { htmlToText } from 'html-to-text';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+function Campaigns() {
+  // State and effect hooks
+  // Handler functions
+  // JSX for rendering
+}
 
-### `npm run build` fails to minify
+export default Campaigns;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Segmentation.js**
+```javascript
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function Segmentation() {
+  // State and effect hooks
+  // Handler functions
+  // JSX for rendering
+}
+
+export default Segmentation;
+```
+
+**ScheduleSend.js**
+```javascript
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function ScheduleSend() {
+  // State and effect hooks
+  // Handler functions
+  // JSX for rendering
+}
+
+export default ScheduleSend;
+```
+
+**AutoReplies.js**
+```javascript
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function AutoReplies() {
+  // State and effect hooks
+  // Handler functions
+  // JSX for rendering
+}
+
+export default AutoReplies;
+```
+
+#### 6. Running the Application
+
+1. **Start the Backend Server**
+
+   ```bash
+   cd backend
+   node server.js
+   ```
+
+2. **Start the Frontend Development Server**
+
+   ```bash
+   cd ../client
+   npm start
+   ```
+
+### Integration Guide for Developers
+
+To integrate this email broadcasting tool into the main iHubX project, follow these steps:
+
+1. **Clone and Set Up Repositories:**
+   Ensure both the main iHubX project and the email tool are cloned and dependencies are installed.
+
+2. **Merge Backend Code:**
+   - Copy the `backend` directory from the email tool into the iHubX project's backend.
+   - Update any existing configurations to include Mailjet credentials.
+
+3. **Merge Frontend Code:**
+   - Copy the `client/src/components` directory from the email tool into the iHubX project's frontend.
+   - Integrate the new components (`Campaigns`, `Segmentation`, `ScheduleSend`, `AutoReplies`) into the iHubX project’s routing and navigation.
+
+4. **Ensure Proper Configuration:**
+   - Update `.env` files with Mailjet credentials.
+   - Ensure API endpoints are correctly routed and handled in both backend and frontend.
+
+5. **Test the Integration:**
+   - Test all functionalities: creating templates, sending campaigns, scheduling emails, managing segments, and auto-replies.
+   - Debug any issues that arise during testing.
+
+### Conclusion
+
+This guide provides a step-by-step approach to integrating the Mailjet-based email broadcasting tool into the iHubX project. By following these instructions, developers can ensure a seamless integration and leverage the full capabilities of the email tool. If further customization is needed, developers should refer to the official Mailjet and Nodemailer documentation.
